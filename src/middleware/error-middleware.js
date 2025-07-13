@@ -1,6 +1,6 @@
-import { ResponseError } from "../error/response-error";
+import { ResponseError } from "../error/response-error.js";
 
-export const errorMiddleware = (req, res, next, err) => {
+const errorMiddleware = (req, res, next, err) => {
   if (!err) {
     next();
     return;
@@ -8,7 +8,7 @@ export const errorMiddleware = (req, res, next, err) => {
 
   if (err instanceof ResponseError) {
     res.status(err.status).json({
-      errors: err.message,
+      error: err.message,
     });
   } else {
     res.status(500).json({
@@ -16,3 +16,5 @@ export const errorMiddleware = (req, res, next, err) => {
     });
   }
 };
+
+export { errorMiddleware };
