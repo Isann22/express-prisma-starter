@@ -1,7 +1,29 @@
-import { PrismaClient } from "../app/prisma.js";
+import { prismaClient } from "../app/prisma.js";
+import { ResponseError } from "../error/response-error.js";
 import { validate } from "../helper/validation.js";
+import bcrypt from "bcrypt";
 import { registerUserRequest } from "../validation/user-validation.js";
 
-const register = async (req, res) => {
-  const data = validate(registerUserRequest, req.body);
+const register = async (userReq) => {
+  const data = validate(registerUserRequest, userReq);
+
+  const existUser = prismaClient.user.findUnique({
+    where: {
+      email: data.email,
+    },
+  });
+  if (existUser) {
+    throw ResponseError(400, "email already registered");
+  }
+
+  data.password = await bcrypt.hash(data.password, 10);
+
+  return await prismaClient.user.create({
+    data,
+    select: {
+      username: true,
+    },
+  });
 };
+
+export default { register };
