@@ -12,8 +12,9 @@ const register = async (userReq) => {
       email: data.email,
     },
   });
+
   if (existUser) {
-    throw ResponseError(400, "email already registered");
+    throw new ResponseError(400, "email already registered");
   }
 
   data.password = await bcrypt.hash(data.password, 10);
@@ -21,6 +22,7 @@ const register = async (userReq) => {
   return await prismaClient.user.create({
     data,
     select: {
+      email: true,
       username: true,
     },
   });

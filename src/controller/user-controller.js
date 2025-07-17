@@ -1,12 +1,13 @@
+import logger from "../helper/logger.js";
 import userService from "../service/user-service.js";
-const register = (req, res) => {
+const register = async (req, res, next) => {
   try {
-    const result = userService.register(req.body);
+    const result = await userService.register(req.body);
     res.status(200).json({
-      data: result,
+      result,
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 
